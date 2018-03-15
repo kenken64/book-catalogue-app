@@ -1,0 +1,61 @@
+<br>
+<div class="container">
+    <div class="jumbotron">
+      <form #searchUserForm="ngForm" (ngSubmit)="onSearch()" novalidate class="row">
+        <div class="input-group col-lg-7">
+  
+          <select class="form-control col-3" #searchType="ngModel" id="searchType" [(ngModel)]="model.searchType" [ngModelOptions]="{standalone: true}">
+            <option *ngFor="let type of searchTypes" [ngValue]="type.value">{{type.desc}}</option>
+          </select>
+          <input id="keyword" #keyword="ngModel" name="keyword" type="text" [(ngModel)]="model.keyword"   placeholder="Book Title , Author"
+            class="form-control" #title="ngModel"/>
+        </div>
+        <div class="col-lg-2">
+          <button type="submit" id="searchBtn" class="btn btn-primary" id="search">Search</button>
+        </div>
+      </form>
+    </div>
+    <div *ngIf="(result)?.length > 0" class="row">
+        <div class="col-xs-12 col-12 col-md-6">
+          <pagination
+            class="pagination-sm"
+            [boundaryLinks]="true"
+            [rotate]="false"
+            [totalItems]="totalItems"
+            [(ngModel)]="currentPage"
+            [itemsPerPage]="itemsPerPage"
+            [maxSize]="maxSize"
+            (pageChanged)="pageChanged($event)"
+            (numPages)="numPages = $event">
+          </pagination>
+        </div>
+      </div>
+       
+    <pre *ngIf="(result)?.length > 0" class="card card-block card-header">Page: {{currentPage}} / {{numPages}}</pre>
+    <hr>
+    
+    <table *ngIf="(result)?.length > 0" class="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Book Title</th>
+              <th>Author Name</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let book of result; let i = index">
+              <th scope="row">{{i +1}}</th>
+              <td><img src="/assets/images/thumbnails/{{book.cover_thumbnail}}" alt="..." class="img-thumbnail"> {{book.title}}</td>
+              <td>{{book.author_lastname | uppercase}} {{book.author_firstname | uppercase}}</td>
+              <td>
+                <button class="btn btn-primary" title="edit user" (click)="edit(user, template2)"><i class="fas fa-edit" aria-hidden="true"></i></button>
+                <button class="btn btn-danger" title="delete user"
+                      (click)="onDelete(user)"><i class="fas fa-trash-alt" aria-hidden="true"></i></button>
+              </td>
+            </tr>
+            
+          </tbody>
+      </table>
+      <div *ngIf="(result)?.length==0"><p class="font-weight-bold">No books found.</p></div>
+  </div>

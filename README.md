@@ -1,4 +1,4 @@
-# BookCatologApp
+# Book Catalogue App
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.7.1.
 
@@ -25,3 +25,33 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+## Development Steps 
+1. Install app related dependencies. 
+`npm install bootstrap font-awesome ng2-toasty ngx-bootstrap popper.js simple-line-icons tether --save`
+2. Edit the .angular-cli.json to add in the styling
+
+```javascript
+"styles": [
+"../node_modules/tether/dist/css/tether.min.css",
+"../node_modules/bootstrap/dist/css/bootstrap.min.css",
+"../node_modules/ng2-toasty/bundles/style-bootstrap.css",
+"../node_modules/font-awesome/css/font-awesome.min.css",
+"../node_modules/simple-line-icons/css/simple-line-icons.css",
+"../node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
+"styles.css"
+],
+"scripts": [
+"../node_modules/jquery/dist/jquery.slim.min.js",
+"../node_modules/tether/dist/js/tether.min.js",
+"../node_modules/popper.js/dist/popper.min.js",
+"../node_modules/bootstrap/dist/js/bootstrap.min.js"
+],
+```
+3. Add google font and font awesome css src/index.html
+```html
+<link href="//fonts.googleapis.com/css?family=Titillium+Web:700|Source+Serif+Pro:400,700|Merriweather+Sans:400,700|Source+Sans+Pro:400,300,600,700,300italic,400italic,600italic,700italic" rel="stylesheet" type="text/css">
+<script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+```
+4. Unzip the library thumbnails to the src/assests/images directory.
+5. 

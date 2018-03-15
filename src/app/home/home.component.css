@@ -1,0 +1,26 @@
+header.masthead {
+    position: relative;
+    background-color: #343a40;
+    background: url("/assets/images/bg-masthead.jpg") no-repeat center center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+  }
+  
+  header.masthead .overlay {
+    position: absolute;
+    background-color: #212529;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0.3;
+  }
+  
+  header.masthead h1 {
+    font-size: 2rem;
+  }
+  
