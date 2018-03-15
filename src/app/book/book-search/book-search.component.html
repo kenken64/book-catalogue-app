@@ -1,17 +1,18 @@
 <br>
 <div class="container">
     <div class="jumbotron">
-      <form #searchUserForm="ngForm" (ngSubmit)="onSearch()" novalidate class="row">
+      <form #searchBooksForm="ngForm" (ngSubmit)="onSearch()" novalidate class="row">
         <div class="input-group col-lg-7">
   
           <select class="form-control col-3" #searchType="ngModel" id="searchType" [(ngModel)]="model.searchType" [ngModelOptions]="{standalone: true}">
             <option *ngFor="let type of searchTypes" [ngValue]="type.value">{{type.desc}}</option>
           </select>
           <input id="keyword" #keyword="ngModel" name="keyword" type="text" [(ngModel)]="model.keyword"   placeholder="Book Title , Author"
-            class="form-control" #title="ngModel"/>
+            class="form-control" #title="ngModel" [ngClass]="{'has-error': keyword.errors}" pattern="[a-zA-Z][a-zA-Z ]+" required/>
+            
         </div>
         <div class="col-lg-2">
-          <button type="submit" id="searchBtn" class="btn btn-primary" id="search">Search</button>
+          <button type="submit" id="searchBtn" [disabled]="!searchBooksForm.form.valid" class="btn btn-primary" id="search">Search</button>
         </div>
       </form>
     </div>
