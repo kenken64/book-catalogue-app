@@ -7,8 +7,7 @@ export class BookResult {
         public cover_thumbnail: string,
         public modified_date: string,
         public created_date: string,
-        public is_deleted: number,
-
+        public is_deleted: number
     ){
 
     }            

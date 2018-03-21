@@ -22,7 +22,8 @@ var pool = mysql.createPool({
 
 const findAllBooks = "SELECT id, title, cover_thumbnail, author_firstname, author_lastname FROM books LIMIT ? OFFSET ?";
 const findOneBook = "SELECT * FROM books WHERE id = ?";
-const saveOneBook = "UPDATE books SET title = ?, author_firstname = ?, author_lastname = ? WHERE id = ?";
+const updateBook = "UPDATE books SET title = ?, author_firstname = ?, author_lastname = ? WHERE id = ?";
+const saveOneBook = "INSERT INTO books (title, cover_thumbnail, author_firstname, author_lastname) VALUES (? ,? ,? ,?)";
 const searchBooksByCriteria = "SELECT * FROM books WHERE (title LIKE ?) || author_firstname LIKE ? || author_lastname LIKE ?";
 const searchBookByTitle = "SELECT * FROM books WHERE title LIKE ?";
 const searchBookByName = "SELECT * FROM books WHERE author_firstname LIKE ? || author_lastname LIKE ?";
@@ -53,6 +54,8 @@ var makeQuery = function (sql, pool) {
 
 var findAll = makeQuery(findAllBooks, pool);
 var findOne = makeQuery(findOneBook, pool);
+
+var updateOne = makeQuery(updateBook, pool);
 var saveOne = makeQuery(saveOneBook, pool);
 var searchBooks = makeQuery(searchBooksByCriteria, pool);
 var searchByTitle = makeQuery(searchBookByTitle, pool);
@@ -83,9 +86,10 @@ app.get("/api/book/:bookId", function (req, res) {
         });
 });
 
-app.post("/api/book/save", function (req, res) {
-    console.log(req.body.params);
-    saveOne([req.body.params.title, req.body.params.author_firstname, req.body.params.author_lastname, req.body.params.id])
+app.post("/api/books", function (req, res) {
+    console.log(req.body);
+    
+    saveOne([req.body.book_title, req.body.imageUrl ,req.body.author_firstname, req.body.author_lastname])
         .then(function (results) {
             res.status(200).json(results);
             console.log(results);

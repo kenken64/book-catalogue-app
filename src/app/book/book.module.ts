@@ -16,9 +16,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ModalModule, BsDatepickerModule } from 'ngx-bootstrap';
 import { TabsModule } from 'ngx-bootstrap';
 import { CarouselModule } from 'ngx-bootstrap';
-import { ToastyModule } from 'ng2-toasty';
+import { AddBookComponent } from './add-book/add-book.component';
 
 const booksRouting: ModuleWithProviders = RouterModule.forChild([
+  {
+    path: 'books/add',
+    component: AddBookComponent
+  },
   {
     path: 'books',
     component: BookSearchComponent
@@ -46,9 +50,8 @@ const booksRouting: ModuleWithProviders = RouterModule.forChild([
     PopoverModule.forRoot(),
     ProgressbarModule.forRoot(),
     BrowserAnimationsModule,
-    PaginationModule.forRoot(),
-    ToastyModule
+    PaginationModule.forRoot()
   ],
-  declarations: [BookSearchComponent, BookDetailsComponent]
+  declarations: [BookSearchComponent, BookDetailsComponent, AddBookComponent]
 })
 export class BookModule { }

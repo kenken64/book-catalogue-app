@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { HomeModule } from './home/home.module';
+import { ToastyModule } from 'ng2-toasty';
 
 
 import {
@@ -30,7 +31,8 @@ const rootRouting: ModuleWithProviders = RouterModule.forRoot([]);
     HomeModule,
     rootRouting,
     SharedModule,
-    BookModule
+    BookModule,
+    ToastyModule
   ],
   providers: [BookServiceService],
   bootstrap: [AppComponent]

@@ -9,9 +9,15 @@
       <li class="nav-item">
           <a class="nav-link" routerLink="/" routerLinkActive="active"><i class="fas fa-home"></i>&nbsp;Home</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/books" routerLinkActive="active"><i class="fas fa-book"></i>&nbsp;Books</a>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Books
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" routerLink="/books/add" routerLinkActive="active"><i class="fas fa-plus"></i>&nbsp;Add</a>
+          <a class="dropdown-item" routerLink="/books"><i class="fas fa-book"></i>&nbsp;Search</a>
+        </div>
       </li>
-    </ul>
+     </ul>
   </div>
 </nav>

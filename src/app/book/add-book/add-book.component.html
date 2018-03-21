@@ -1,0 +1,23 @@
+<br>
+<h1 class="text-center">Add Book</h1>
+<div class="container">
+  
+<form #addBooksForm="ngForm" (ngSubmit)="onSaveBook()" novalidate>
+  <div class="form-group row">
+    <input id="book_title" #book_title="ngModel" name="book_title" type="text" [(ngModel)]="model.book_title"   placeholder="Book Title" class="form-control" [ngClass]="{'has-error': book_title.errors}" required/>
+  </div>
+  
+  <div class="form-group row">
+    <input id="author_firstname" #author_firstname="ngModel" name="author_firstname" type="text" [(ngModel)]="model.author_firstname" placeholder="First Name" class="form-control" [ngClass]="{'has-error': author_firstname.errors}" required/>
+  </div>
+  
+  <div class="form-group row">
+    <input id="author_lastname" #author_lastname="ngModel" name="author_lastname" type="text" [(ngModel)]="model.author_lastname"   placeholder="Last Name" class="form-control" [ngClass]="{'has-error': author_lastname.errors}" required/>
+  </div>
+
+  <div class="form-group row">
+    <input id="imageUrl" #imageUrl="ngModel" name="imageUrl" type="text" [(ngModel)]="model.imageUrl"   placeholder="Image URL" class="form-control"/>
+  </div>
+    <button type="submit" id="saveBookBtn" [disabled]="!addBooksForm.form.valid" class="btn btn-primary">Save</button>
+</form>
+</div>

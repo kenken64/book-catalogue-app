@@ -54,4 +54,8 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
 ```
 4. Unzip the library thumbnails to the src/assests/images directory.
-5. 
+
+
+## this app consist 5 features
+1. 
+2. 
