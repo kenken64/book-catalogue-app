@@ -1,9 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef  } from '@angular/core';
 
 import { BookCriteria } from '../../shared/models/book-criteria';
 import { BookResult } from '../../shared/models/book-result';
 import { BookServiceService } from '../../shared/services/book.service';
 import { Observable } from 'rxjs/Observable';
+import { Book } from '../../shared/models/book';
+
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/catch';
@@ -21,8 +25,9 @@ import { environment } from '../../../environments/environment';
 export class BookSearchComponent implements OnInit {
   searchTypes = [ { desc: "Title", value: "Title"}, {desc: "Author", value: "Author"}, {desc: "Both", value: 1}];
   booksObservable: Observable<BookResult[]>;
+  modalRef: BsModalRef;
   result: BookResult[] = [];
-
+  private editBook: Book;
   maxSize: number = 5;
   totalItems: number = 0;
   currentPage: number = 1;
@@ -32,7 +37,8 @@ export class BookSearchComponent implements OnInit {
   indexOnPage: number = 0;
   model = new BookCriteria('', 'Title', this.currentPage, this.itemsPerPage);
   
-  constructor( private bookService: BookServiceService ) { 
+  constructor( private bookService: BookServiceService,
+    private modalService: BsModalService ) { 
     this.booksObservable = this.bookService.searchBooks(this.model);
   }
 
@@ -85,5 +91,21 @@ export class BookSearchComponent implements OnInit {
   
   }
 
+  edit(bkresult: BookResult, template: TemplateRef<any>){
+    console.log(bkresult);
+    this.editBook = new Book(bkresult.author_firstname, 
+           bkresult.author_lastname, 
+           bkresult.title, 
+           bkresult.cover_thumbnail,
+           bkresult.id );
+    this.modalRef = this.modalService.show(template);
+  }
 
+  onSaveEditBook(){
+    console.log("Edit Book");
+  }
+
+  onCancel(){
+    this.modalRef.hide();
+  }
 }
