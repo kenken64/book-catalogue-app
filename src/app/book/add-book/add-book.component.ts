@@ -12,7 +12,7 @@ import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
 export class AddBookComponent implements OnInit {
 
   booksObservable: Observable<Book>;
-  model = new Book('', '', '', '');
+  model = new Book('', '', '', '', 0);
   
   constructor(private bookService: BookServiceService,
     private toastyService: ToastyService, 

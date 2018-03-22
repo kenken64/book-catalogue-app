@@ -8,6 +8,8 @@ import { Book } from '../../shared/models/book';
 
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
+import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
+
 
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/catch';
@@ -25,6 +27,8 @@ import { environment } from '../../../environments/environment';
 export class BookSearchComponent implements OnInit {
   searchTypes = [ { desc: "Title", value: "Title"}, {desc: "Author", value: "Author"}, {desc: "Both", value: 1}];
   booksObservable: Observable<BookResult[]>;
+  updateBookObservable: Observable<Book>;
+  
   modalRef: BsModalRef;
   result: BookResult[] = [];
   private editBook: Book;
@@ -38,7 +42,9 @@ export class BookSearchComponent implements OnInit {
   model = new BookCriteria('', 'Title', this.currentPage, this.itemsPerPage);
   
   constructor( private bookService: BookServiceService,
-    private modalService: BsModalService ) { 
+    private modalService: BsModalService,
+    private toastyService: ToastyService, 
+    private toastyConfig: ToastyConfig ) { 
     this.booksObservable = this.bookService.searchBooks(this.model);
   }
 
@@ -91,21 +97,46 @@ export class BookSearchComponent implements OnInit {
   
   }
 
-  edit(bkresult: BookResult, template: TemplateRef<any>){
+  edit(bkresult: BookResult, template: TemplateRef<any>, index){
     console.log(bkresult);
     this.editBook = new Book(bkresult.author_firstname, 
            bkresult.author_lastname, 
            bkresult.title, 
            bkresult.cover_thumbnail,
-           bkresult.id );
+           index,
+           bkresult.id);
     this.modalRef = this.modalService.show(template);
   }
 
   onSaveEditBook(){
-    console.log("Edit Book");
+    console.log("Save Edited Book");
+    this.updateBookObservable = this.bookService.updateBook(this.editBook);
+    this.updateBookObservable.subscribe(book => {
+      this.addToastMessage("Update book.", this.editBook.book_title);
+      var bookRsObj = this.result[this.editBook.index];
+      bookRsObj.author_firstname = this.editBook.author_firstname;
+      bookRsObj.author_lastname = this.editBook.author_lastname;
+      bookRsObj.title = this.editBook.book_title;
+      this.result[this.editBook.index] = bookRsObj;
+    });
+    this.modalRef.hide();
   }
 
   onCancel(){
     this.modalRef.hide();
+  }
+
+  addToastMessage(title, msg) {
+    let toastOptions: ToastOptions = {
+        title: title,
+        msg: msg,
+        showClose: true,
+        timeout: 4500,
+        theme: 'bootstrap',
+        onAdd: (toast: ToastData) => {
+            console.log('Book ' + toast.id + ' has been updated!');
+        }
+    };
+    this.toastyService.success(toastOptions);
   }
 }

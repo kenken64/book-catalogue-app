@@ -4,7 +4,9 @@ export class Book {
         public author_lastname: string,
         public book_title: string,
         public imageUrl: string,
-        public id?: number,
+        public index: number,
+        public id?: number
+        
         
     ){
 

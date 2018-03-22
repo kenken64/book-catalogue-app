@@ -51,7 +51,7 @@
               <td><img src="/assets/images/thumbnails/{{book.cover_thumbnail}}" alt="..." class="img-thumbnail"> {{book.title}}</td>
               <td>{{book.author_lastname | uppercase}} {{book.author_firstname | uppercase}}</td>
               <td>
-                <button class="btn btn-primary" title="edit book" (click)="edit(book, template)"><i class="fas fa-edit" aria-hidden="true"></i></button>
+                <button class="btn btn-primary" title="edit book" (click)="edit(book, template, i)"><i class="fas fa-edit" aria-hidden="true"></i></button>
                 <button class="btn btn-danger" title="delete book"
                       (click)="onDelete(user)"><i class="fas fa-trash-alt" aria-hidden="true"></i></button>
               </td>

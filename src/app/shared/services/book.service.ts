@@ -33,6 +33,15 @@ export class BookServiceService {
       );
   }
 
+  public updateBook (book: Book): Observable<Book> {
+    console.log(book);
+    console.log(this.bookRootApiUrl);
+    return this.httpClient.put<Book>(this.bookRootApiUrl, book, httpOptions)
+      .pipe(
+        catchError(this.handleError('updateBook', book))
+      );
+  }
+
   public searchBooks(model) : Observable<BookResult[]> {
     var getURL = `${this.serachBookApiURL}?keyword=${model.keyword}&searchType=${model.searchType}&sortBy=${model.sortBy}&currentPerPage=${model.currentPerPage}&itemsPerPage=${model.itemsPerPage}`;
     return this.httpClient.get<BookResult[]>(getURL, httpOptions)
