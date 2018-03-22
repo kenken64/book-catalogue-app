@@ -22,6 +22,7 @@ var pool = mysql.createPool({
 
 const findAllBooks = "SELECT id, title, cover_thumbnail, author_firstname, author_lastname FROM books LIMIT ? OFFSET ?";
 const findOneBook = "SELECT * FROM books WHERE id = ?";
+const deleteOneBook = "DELETE FROM books WHERE id = ?";
 const updateBook = "UPDATE books SET title = ?, author_firstname = ?, author_lastname = ? WHERE id = ?";
 const saveOneBook = "INSERT INTO books (title, cover_thumbnail, author_firstname, author_lastname) VALUES (? ,? ,? ,?)";
 const searchBooksByCriteria = "SELECT * FROM books WHERE (title LIKE ?) || author_firstname LIKE ? || author_lastname LIKE ?";
@@ -57,6 +58,8 @@ var findOne = makeQuery(findOneBook, pool);
 
 var updateOne = makeQuery(updateBook, pool);
 var saveOne = makeQuery(saveOneBook, pool);
+var deleteOne = makeQuery(deleteOneBook, pool);
+
 var searchBooks = makeQuery(searchBooksByCriteria, pool);
 var searchByTitle = makeQuery(searchBookByTitle, pool);
 var searchByName = makeQuery(searchBookByName, pool);
@@ -90,6 +93,20 @@ app.post("/api/books", function (req, res) {
     console.log(req.body);
     
     saveOne([req.body.book_title, req.body.imageUrl ,req.body.author_firstname, req.body.author_lastname])
+        .then(function (result) {
+            res.status(200).json(result);
+            console.log(result);
+        })
+        .catch(function (err) {
+            res.status(500).end();
+        });
+});
+
+app.delete("/api/books/:delId", function (req, res) {
+    console.log(req.body);
+    res.status(200).json({});
+    console.log(req.params.delId);
+    deleteOne([req.params.delId])
         .then(function (result) {
             res.status(200).json(result);
             console.log(result);

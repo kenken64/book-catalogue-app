@@ -48,12 +48,12 @@
           <tbody>
             <tr *ngFor="let book of result; let i = index">
               <th scope="row">{{i +1}}</th>
-              <td><img src="/assets/images/thumbnails/{{book.cover_thumbnail}}" alt="..." class="img-thumbnail"> {{book.title}}</td>
+              <td><img style="width: 200px; height: 210px" src="/assets/images/thumbnails/{{book.cover_thumbnail}}" alt="..." class="img-fluid img-thumbnail"> {{book.title}}</td>
               <td>{{book.author_lastname | uppercase}} {{book.author_firstname | uppercase}}</td>
               <td>
                 <button class="btn btn-primary" title="edit book" (click)="edit(book, template, i)"><i class="fas fa-edit" aria-hidden="true"></i></button>
                 <button class="btn btn-danger" title="delete book"
-                      (click)="onDelete(user)"><i class="fas fa-trash-alt" aria-hidden="true"></i></button>
+                      (click)="delete(book, template2, i)"><i class="fas fa-trash-alt" aria-hidden="true"></i></button>
               </td>
             </tr>
             
@@ -90,8 +90,47 @@
               <input id="imageUrl" #imageUrl="ngModel" name="imageUrl" type="text" [(ngModel)]="editBook.imageUrl"   placeholder="Image URL" class="form-control"/>
             </div>
               <button type="submit" id="editBookBtn" [disabled]="!editBooksForm.form.valid" class="btn btn-primary">Save</button>
-              <button type="submit" id="cancelBookBtn" (click)="onCancel()" class="btn btn-primary">Cancel</button>
           </form>
+          
+          </div>
+      </div>
+    </ng-template>
+
+
+    <ng-template #template2>
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Delete Book ?</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <br>
+          <div class="container">
+            
+          <form #delBookForm="ngForm" (ngSubmit)="onDelBook()" novalidate>
+            <div class="form-group row">
+              <label for="bookTitle" class="font-weight-bold">Book Title &nbsp;</label>
+              {{editBook.book_title}}
+            </div>
+            
+            <div class="form-group row">
+              <label for="firstName" class="font-weight-bold">First Name &nbsp;</label>
+              {{editBook.author_firstname}}
+            </div>
+            
+            <div class="form-group row">
+              <label for="lastName" class="font-weight-bold">Last Name&nbsp;</label>
+              {{editBook.author_lastname}}
+            </div>
+          
+            <div class="form-group row">
+              <label for="imageUrl" class="font-weight-bold">Image URL&nbsp;</label>
+              {{editBook.imageUrl}}
+            </div>
+              <button type="submit" id="deleteBookBtn" class="btn btn-primary">Yes</button>
+          </form>
+          
           </div>
       </div>
     </ng-template>

@@ -42,6 +42,18 @@ export class BookServiceService {
       );
   }
 
+  public deleteBook (book: Book): Observable<Book> {
+    console.log(book);
+    console.log(book.id);
+    console.log(this.bookRootApiUrl);
+    const deleteUrl = `${this.bookRootApiUrl}/${book.id}`; // DELETE api/books/1
+    console.log(deleteUrl);
+    return this.httpClient.delete<Book>(deleteUrl, httpOptions)
+      .pipe(
+        catchError(this.handleError('deleteBook', book))
+      );
+  }
+
   public searchBooks(model) : Observable<BookResult[]> {
     var getURL = `${this.serachBookApiURL}?keyword=${model.keyword}&searchType=${model.searchType}&sortBy=${model.sortBy}&currentPerPage=${model.currentPerPage}&itemsPerPage=${model.itemsPerPage}`;
     return this.httpClient.get<BookResult[]>(getURL, httpOptions)
