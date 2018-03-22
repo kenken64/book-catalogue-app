@@ -1,8 +1,6 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { BookSearchComponent } from './book-search/book-search.component';
-import { BookDetailsComponent } from './book-details/book-details.component';
 import { SharedModule } from '../shared';
 import { BsDropdownModule } from 'ngx-bootstrap';
 import { AlertModule } from 'ngx-bootstrap';
@@ -16,21 +14,17 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ModalModule, BsDatepickerModule } from 'ngx-bootstrap';
 import { TabsModule } from 'ngx-bootstrap';
 import { CarouselModule } from 'ngx-bootstrap';
-import { AddBookComponent } from './add-book/add-book.component';
-import { BookUploadComponent } from './book-upload/book-upload.component';
+import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
 
-const booksRouting: ModuleWithProviders = RouterModule.forChild([
+const securityRouting: ModuleWithProviders = RouterModule.forChild([
   {
-    path: 'books/add',
-    component: AddBookComponent
+    path: 'login',
+    component: LoginComponent
   },
   {
-    path: 'books',
-    component: BookSearchComponent
-  },
-  {
-    path: 'books-details/:book_id',
-    component: BookDetailsComponent
+    path: 'register',
+    component: RegisterComponent
   }
 ]);
 
@@ -38,7 +32,7 @@ const booksRouting: ModuleWithProviders = RouterModule.forChild([
   imports: [
     CommonModule,
     SharedModule,
-    booksRouting,
+    securityRouting,
     ModalModule.forRoot(),
     BsDatepickerModule.forRoot(),
     TabsModule.forRoot(),
@@ -53,6 +47,6 @@ const booksRouting: ModuleWithProviders = RouterModule.forChild([
     BrowserAnimationsModule,
     PaginationModule.forRoot()
   ],
-  declarations: [BookSearchComponent, BookDetailsComponent, AddBookComponent, BookUploadComponent]
+  declarations: [LoginComponent, RegisterComponent]
 })
-export class BookModule { }
+export class SecurityModule { }

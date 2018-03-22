@@ -3,6 +3,7 @@ import { Book } from '../../shared/models/book';
 import { BookServiceService } from '../../shared/services/book.service';
 import { Observable } from 'rxjs/Observable';
 import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
+import { AuthService } from '../../shared/services/auth.service';
 
 @Component({
   selector: 'app-add-book',
@@ -16,9 +17,13 @@ export class AddBookComponent implements OnInit {
   
   constructor(private bookService: BookServiceService,
     private toastyService: ToastyService, 
-    private toastyConfig: ToastyConfig) { }
+    private toastyConfig: ToastyConfig,
+    private authService: AuthService) {
+
+  }
 
   ngOnInit() {
+    this.authService.setLogon(true);
   }
 
 

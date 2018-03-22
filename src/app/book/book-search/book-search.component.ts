@@ -11,6 +11,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
 
 import { environment } from '../../../environments/environment';
+import { AuthService } from '../../shared/services/auth.service';
 
 @Component({
   selector: 'app-book-search',
@@ -19,9 +20,9 @@ import { environment } from '../../../environments/environment';
 })
 export class BookSearchComponent implements OnInit {
   searchTypes = [ { desc: "Title", value: "Title"}, {desc: "Author", value: "Author"}, {desc: "Both", value: 1}];
-  booksObservable: Observable<BookResult[]>;
-  updateBookObservable: Observable<Book>;
-  deleteBookObservable: Observable<Book>;
+  booksObservable$: Observable<BookResult[]>;
+  updateBookObservable$: Observable<Book>;
+  deleteBookObservable$: Observable<Book>;
   
   modalRef: BsModalRef;
   result: BookResult[] = [];
@@ -38,12 +39,14 @@ export class BookSearchComponent implements OnInit {
   constructor( private bookService: BookServiceService,
     private modalService: BsModalService,
     private toastyService: ToastyService, 
-    private toastyConfig: ToastyConfig ) { 
-    this.booksObservable = this.bookService.searchBooks(this.model);
+    private toastyConfig: ToastyConfig,
+    private authService: AuthService ) { 
+    this.booksObservable$ = this.bookService.searchBooks(this.model);
   }
 
   ngOnInit() {
-    this.booksObservable.subscribe((x) => {
+    this.authService.setLogon(true);
+    this.booksObservable$.subscribe((x) => {
       this.totalItems = x.length;
       this.result = x.slice(this.indexOnPage, this.itemsPerPage);
     });
@@ -51,10 +54,10 @@ export class BookSearchComponent implements OnInit {
 
   onSearch() {
     console.log(this.model.keyword);
-    this.booksObservable = this.bookService.searchBooks(this.model)
+    this.booksObservable$ = this.bookService.searchBooks(this.model)
       .do(result => this.totalItems = result.length)
       .map(result => result);
-    this.booksObservable.subscribe(books => this.result = books);
+    this.booksObservable$.subscribe(books => this.result = books);
   }
 
 
@@ -64,7 +67,7 @@ export class BookSearchComponent implements OnInit {
     this.model.currentPerPage = event.page;
     this.model.itemsPerPage = event.itemsPerPage;
     this.indexOnPage = event.page * (this.itemsPerPage);
-    this.booksObservable = this.bookService.searchBooks(this.model)
+    this.booksObservable$ = this.bookService.searchBooks(this.model)
       .do(result => {
         this.totalItems = result.length;
         const numPages = result.length / this.itemsPerPage;
@@ -86,8 +89,8 @@ export class BookSearchComponent implements OnInit {
         return this.result;
       })
       .map(result => result);
-    this.booksObservable.subscribe();
-    console.log('this.booksObservable: ' + this.booksObservable);
+    this.booksObservable$.subscribe();
+    console.log('this.booksObservable: ' + this.booksObservable$);
   
   }
 
@@ -115,8 +118,8 @@ export class BookSearchComponent implements OnInit {
 
   onSaveEditBook(){
     console.log("Save Edited Book");
-    this.updateBookObservable = this.bookService.updateBook(this.editBook);
-    this.updateBookObservable.subscribe(book => {
+    this.updateBookObservable$ = this.bookService.updateBook(this.editBook);
+    this.updateBookObservable$.subscribe(book => {
       this.addToastMessage("Update book.", this.editBook.book_title);
       var bookRsObj = this.result[this.editBook.index];
       bookRsObj.author_firstname = this.editBook.author_firstname;
@@ -130,8 +133,8 @@ export class BookSearchComponent implements OnInit {
 
   onDelBook(){
     console.log("Delete book !" + this.editBook.index);
-    this.deleteBookObservable = this.bookService.deleteBook(this.editBook);
-    this.deleteBookObservable.subscribe(book => {
+    this.deleteBookObservable$ = this.bookService.deleteBook(this.editBook);
+    this.deleteBookObservable$.subscribe(book => {
       this.addToastMessage("Book deleted.", this.editBook.book_title);
       console.log(this.editBook.index);
       var bookRsObj = this.result[this.editBook.index];

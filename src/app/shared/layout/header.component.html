@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;" *ngIf="isLogon || async">
   <a class="navbar-brand" routerLink="/Home"
   routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Book Worm</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -20,4 +20,14 @@
       </li>
      </ul>
   </div>
+  <div class="navbar-collapse collapse order-3 dual-collapse2">
+    <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+            <a class="nav-link" routerLink="/login">Login</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" routerLink="/register">Register</a>
+        </li>
+    </ul>
+</div>
 </nav>

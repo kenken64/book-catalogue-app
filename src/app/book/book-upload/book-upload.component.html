@@ -1,0 +1,5 @@
+<form [formGroup]="uploadForm" (ngSubmit)="upload()" novalidate>
+
+  <input type="file" id="cover_thumbnail" change="onChange($event)" #fileInput>
+  <button type="submit">Upload</button>
+</form>>
