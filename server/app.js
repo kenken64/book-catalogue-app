@@ -1,13 +1,54 @@
 require('dotenv').config()
-var express = require("express");
-var bodyParser = require("body-parser");
-var mysql = require("mysql");
-var q = require("q");
-var cors = require('cors');
+const express = require("express"),
+     bodyParser = require("body-parser"),
+     mysql = require("mysql"),
+     q = require("q"),
+     cors = require('cors'),
+     multer = require('multer'),
+     googleStorage = require('@google-cloud/storage');
 
 var app = express();
+/**
+ * service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read: if request.auth == null;
+      allow write: if request.auth != null;
+    }
+  }
+}
+
+export GOOGLE_APPLICATION_CREDENTIALS=D:\Projects\book-catalogue-app\server\fsf2018r1-firebase-adminsdk-r3ido-01c84c91f6.json
+set GOOGLE_APPLICATION_CREDENTIALS=D:\Projects\book-catalogue-app\server\fsf2018r1-firebase-adminsdk-r3ido-01c84c91f6.json
+ */
+
+const  gstorage = googleStorage({
+    projectId: "fsf2018r1",
+    keyFileName: process.env.FIREBASE_KEYFILENAME
+});
+
+const bucket = gstorage.bucket('fsf2018r1.appspot.com');
+
+const googleMulter = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 20 * 1024 * 1024 // 20MB
+    }
+})
+
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads/')
+    },
+    filename: function (req, file, cb) {
+      cb(null,  Date.now() + '_' + file.originalname)
+    }
+  })
+  
+var diskUpload = multer({ storage: storage })
 
 app.use(cors())
+
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(bodyParser.json({limit: '50mb'}));
 
@@ -25,6 +66,8 @@ const findOneBook = "SELECT * FROM books WHERE id = ?";
 const deleteOneBook = "DELETE FROM books WHERE id = ?";
 const updateBook = "UPDATE books SET title = ?, author_firstname = ?, author_lastname = ? WHERE id = ?";
 const saveOneBook = "INSERT INTO books (title, cover_thumbnail, author_firstname, author_lastname) VALUES (? ,? ,? ,?)";
+const saveOneGallery = "INSERT INTO gallery (filename, fileUrl, remarks) VALUES (? ,? ,?)";
+
 const searchBooksByCriteria = "SELECT * FROM books WHERE (title LIKE ?) || author_firstname LIKE ? || author_lastname LIKE ?";
 const searchBookByTitle = "SELECT * FROM books WHERE title LIKE ?";
 const searchBookByName = "SELECT * FROM books WHERE author_firstname LIKE ? || author_lastname LIKE ?";
@@ -58,6 +101,8 @@ var findOne = makeQuery(findOneBook, pool);
 
 var updateOne = makeQuery(updateBook, pool);
 var saveOne = makeQuery(saveOneBook, pool);
+var saveGallery = makeQuery(saveOneGallery, pool);
+
 var deleteOne = makeQuery(deleteOneBook, pool);
 
 var searchBooks = makeQuery(searchBooksByCriteria, pool);
@@ -185,6 +230,61 @@ app.get("/api/books/search", function (req, res) {
             });
     }
 });
+
+
+
+
+app.post('/upload-firestore', googleMulter.single('coverThumbnail'), (req, res)=>{
+    console.log('upload here ...');
+    console.log(req.file);
+    uploadToFireBaseStorage(req.file).then((result=>{
+        console.log("firebase stored -> " + result);
+        saveGallery([req.file.originalname, result, req.body.remarks]).then((result)=>{
+            console.log(result);
+        }).catch((error)=>{
+            console.log("error ->" + error);
+        })
+    })).catch((error)=>{
+        console.log(error);
+    })
+    res.status(200).json({});
+})
+
+app.post('/upload', diskUpload.single('coverThumbnail'), (req, res)=>{
+    console.log('upload here ...');
+    
+    res.status(200).json(req.file);
+})
+
+// upload the incoming file from the angular5 ui 
+const uploadToFireBaseStorage = function(file) {
+    return new Promise((resolve, reject)=>{
+        if(!file){
+            reject('Invalid file upload');
+        }
+
+        let newfileName = `${Date.now()}_${file.originalname}`;
+        let fileupload = bucket.file(newfileName);
+        const blobStream = fileupload.createWriteStream({
+            metadata: {
+                contentType: file.mimetype
+            }
+        });
+        blobStream.on('error', (error)=>{
+            console.log(error);
+            reject('Something went wrong during file upload');
+        });
+
+        blobStream.on('finish', ()=>{
+            console.log(fileupload.name);
+            const url = `https://firebasestorage.googleapis.com/v0/b/fsf2018r1.appspot.com/o/${fileupload.name}?alt=media`;
+            file.fileURL = url;
+            resolve(url)
+        });
+            
+        blobStream.end(file.buffer);
+    });
+}
 
 app.use(express.static(__dirname + "/public"));
 

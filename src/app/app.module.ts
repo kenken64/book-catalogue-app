@@ -12,6 +12,7 @@ import {
   HeaderComponent,
   BookServiceService,
   AuthService,
+  FileuploadService,
   SharedModule
 } from './shared';
 
@@ -41,7 +42,7 @@ const rootRouting: ModuleWithProviders = RouterModule.forRoot([]);
     ToastyModule,
     NgxLocalStorageModule.forRoot()
   ],
-  providers: [BookServiceService, AuthService],
+  providers: [BookServiceService, AuthService ,FileuploadService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

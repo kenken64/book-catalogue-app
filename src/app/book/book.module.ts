@@ -18,6 +18,7 @@ import { TabsModule } from 'ngx-bootstrap';
 import { CarouselModule } from 'ngx-bootstrap';
 import { AddBookComponent } from './add-book/add-book.component';
 import { BookUploadComponent } from './book-upload/book-upload.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 const booksRouting: ModuleWithProviders = RouterModule.forChild([
   {
@@ -31,7 +32,12 @@ const booksRouting: ModuleWithProviders = RouterModule.forChild([
   {
     path: 'books-details/:book_id',
     component: BookDetailsComponent
+  },
+  {
+    path: 'book-upload',
+    component: BookUploadComponent
   }
+  
 ]);
 
 @NgModule({
@@ -51,7 +57,8 @@ const booksRouting: ModuleWithProviders = RouterModule.forChild([
     PopoverModule.forRoot(),
     ProgressbarModule.forRoot(),
     BrowserAnimationsModule,
-    PaginationModule.forRoot()
+    PaginationModule.forRoot(),
+    ReactiveFormsModule
   ],
   declarations: [BookSearchComponent, BookDetailsComponent, AddBookComponent, BookUploadComponent]
 })
