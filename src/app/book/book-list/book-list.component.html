@@ -1,0 +1,25 @@
+<br>
+<h1 class="text-center">List of Book Details</h1>
+<div class="container">
+<div id="accordion" *ngFor="let bookdetail of results">
+    <div class="card">
+      <div class="card-header" id="headingOne">
+        <h5 class="mb-0">
+          <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              {{bookdetail.title}}
+          </button>
+        </h5>
+      </div>
+  
+      <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+        <div class="card-body">
+            {{bookdetail.longDescription}}
+        </div>
+        <ul class="list-group">
+            <li class="list-group-item" *ngFor="let toc of bookdetail.tocs">{{toc}}</li>
+        </ul>
+      </div>
+    </div>
+    
+  </div>
+</div>

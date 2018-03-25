@@ -1,3 +1,41 @@
-<p>
-  book-details works!
-</p>
+<br>
+<h1 class="text-center">Book Details</h1>
+<div class="container">
+<form [formGroup]="form" autocomplete="off" novalidate>
+  <fieldset>
+        <div class="form-group row">
+            <label>Email Address:</label>
+            <input type="text" class="form-control" name="email" formControlName="email">
+            
+        </div>
+      <div class="form-group row">
+        <label>Book Title:</label>
+        <input type="text" class="form-control" name="title" formControlName="title">
+      </div>
+      <div class="form-group row">
+          <label>Book Description:</label>
+          <textarea name="description" class="form-control" rows="4" formControlName="longDescription"></textarea>
+      </div>
+      
+
+      <div class="form-group row">
+          <label>Table of Content:</label>
+          <div class="col-lg-6">
+            <div class="input-group">
+                <input type="text" name="toc" class="form-control" formControlName="toc">
+              <span class="input-group-btn">
+                <button (click)="addToc(form)" class="btn btn-secondary">Add</button>
+              </span>
+            </div>
+          </div>
+      </div>
+      <hr>
+      <div *ngFor="let toc of tocs">
+        {{toc}}
+      </div>
+      <hr>
+      <button class="btn btn-primary" [disabled]="!form.valid" (click)="saveBookDetails(form)">Save Book Details</button>
+  </fieldset>
+
+</form>
+</div>

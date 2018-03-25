@@ -10,5 +10,9 @@ export class AuthService {
   setLogon(logonFlag: boolean){
     this.isLoggedInSource.next(logonFlag);
   }
+
+  logout(){
+    
+  }
   
 }

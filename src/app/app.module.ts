@@ -7,12 +7,20 @@ import { HomeModule } from './home/home.module';
 import { ToastyModule } from 'ng2-toasty';
 import { NgxLocalStorageModule } from 'ngx-localstorage';
 
+import {firebaseConfig} from "../environments/firebase.config";
+import {AngularFireModule} from "angularfire2";
+import { AngularFirestoreModule } from 'angularfire2/firestore';
+import { AngularFireStorageModule } from 'angularfire2/storage';
+import { AngularFireAuthModule } from 'angularfire2/auth';
+
+
 import {
   FooterComponent,
   HeaderComponent,
   BookServiceService,
   AuthService,
   FileuploadService,
+  BookfirebaseService,
   SharedModule
 } from './shared';
 
@@ -34,6 +42,10 @@ const rootRouting: ModuleWithProviders = RouterModule.forRoot([]);
   ],
   imports: [
     BrowserModule,
+    AngularFireModule.initializeApp(firebaseConfig),
+    AngularFirestoreModule,
+    AngularFireAuthModule,
+    AngularFireStorageModule,
     HomeModule,
     rootRouting,
     SharedModule,
@@ -42,7 +54,7 @@ const rootRouting: ModuleWithProviders = RouterModule.forRoot([]);
     ToastyModule,
     NgxLocalStorageModule.forRoot()
   ],
-  providers: [BookServiceService, AuthService ,FileuploadService],
+  providers: [BookServiceService, AuthService ,FileuploadService, BookfirebaseService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

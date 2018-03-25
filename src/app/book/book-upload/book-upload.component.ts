@@ -2,6 +2,7 @@ import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { AuthService } from '../../shared/services/auth.service';
 import { FormBuilder, FormGroup , Validators} from '@angular/forms';
 import { FileuploadService } from '../../shared/services/fileupload.service';
+import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
 
 @Component({
   selector: 'app-book-upload',
@@ -20,7 +21,9 @@ export class BookUploadComponent implements OnInit {
   constructor(private authService: AuthService,
     private fb: FormBuilder,
     private fileUploadSvc: FileuploadService,
-    private el: ElementRef) {
+    private el: ElementRef,
+    private toastyService: ToastyService, 
+    private toastyConfig: ToastyConfig,) {
       this.initializeForm();
   }
 
@@ -47,7 +50,9 @@ export class BookUploadComponent implements OnInit {
     this.loading = true;
     this.fileUploadSvc.upload(formModel).subscribe((result)=>{
       console.log(result);
-      this.loading = false;
+      this.addToastMessage("File Uploaded.", '');
+      this.loading=false;
+      this.initializeForm();
     })
   }
 
@@ -62,6 +67,20 @@ export class BookUploadComponent implements OnInit {
       reader.readAsDataURL(file);
       this.uploadForm.get('coverThumbnail').setValue(file);
     }
+  }
+
+  addToastMessage(title, msg) {
+    let toastOptions: ToastOptions = {
+        title: title,
+        msg: msg,
+        showClose: true,
+        timeout: 4500,
+        theme: 'bootstrap',
+        onAdd: (toast: ToastData) => {
+            console.log('Book ' + toast.id + ' has been added!');
+        }
+    };
+    this.toastyService.success(toastOptions);
   }
 
 }

@@ -10,7 +10,7 @@ const httpOptions = {
 
 @Injectable()
 export class FileuploadService {
-  private uploadApiUrl: string = "http://localhost:3000/upload"
+  private uploadApiUrl: string = "http://localhost:3000/upload-firestore"
   constructor(private httpClient: HttpClient,
     private toastyService: ToastyService, 
     private toastyConfig: ToastyConfig) { }

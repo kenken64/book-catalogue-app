@@ -10,7 +10,7 @@
     <img id="previewImg" style="width: 300px; height: 310px" src="https://upload.wikimedia.org/wikipedia/commons/0/09/Dummy_flag.png" #imgPreview alt="upload image">
     <hr>
     <button type="submit" [disabled]="uploadForm.invalid || loading" class="btn btn-success">Upload
-        <i class="fas fa-spinner fa-spin fa-fw" *ngIf="loading || async"></i> 
+        <i class="fas fa-spinner fa-spin fa-fw" *ngIf="loading"></i> 
     </button>
   </form>
 </div>
