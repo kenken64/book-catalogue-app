@@ -18,8 +18,8 @@ var app = express();
   }
 }
 
-export GOOGLE_APPLICATION_CREDENTIALS=D:\Projects\book-catalogue-app\server\fsf2018r1-firebase-adminsdk-r3ido-01c84c91f6.json
-set GOOGLE_APPLICATION_CREDENTIALS=D:\Projects\book-catalogue-app\server\fsf2018r1-firebase-adminsdk-r3ido-01c84c91f6.json
+export GOOGLE_APPLICATION_CREDENTIALS=D:\Projects\book-catalogue-app\server\fsf2018r1-firebase-adminsdk-r3ido-6dc410e642.json
+set GOOGLE_APPLICATION_CREDENTIALS=D:\Projects\book-catalogue-app\server\fsf2018r1-firebase-adminsdk-r3ido-6dc410e642.json
  */
 
 const  gstorage = googleStorage({
