@@ -20,11 +20,13 @@ import { AddBookComponent } from './add-book/add-book.component';
 import { BookUploadComponent } from './book-upload/book-upload.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BookListComponent } from './book-list/book-list.component';
+import {AuthGuard} from "../shared/security/auth.guard";
 
 const booksRouting: ModuleWithProviders = RouterModule.forChild([
   {
     path: 'books/add',
-    component: AddBookComponent
+    component: AddBookComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'books',
@@ -34,7 +36,8 @@ const booksRouting: ModuleWithProviders = RouterModule.forChild([
           children: [
               {
                   path: '',
-                  component: BookDetailsComponent
+                  component: BookDetailsComponent,
+                  canActivate: [AuthGuard]
               },
           ]
       },
@@ -43,23 +46,27 @@ const booksRouting: ModuleWithProviders = RouterModule.forChild([
         children: [
             {
                 path: '',
-                component: BookListComponent
+                component: BookListComponent,
+                canActivate: [AuthGuard]
             },
         ]
       },
       {
           path: '',
-          component: BookSearchComponent
+          component: BookSearchComponent,
+          canActivate: [AuthGuard]
       }
   ]
   },
   {
     path: 'books-details/:book_id',
-    component: BookDetailsComponent
+    component: BookDetailsComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'book-upload',
-    component: BookUploadComponent
+    component: BookUploadComponent,
+    canActivate: [AuthGuard]
   }
 
   

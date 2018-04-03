@@ -1,5 +1,4 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
-import { AuthService } from '../../shared/services/auth.service';
 import { FormBuilder, FormGroup , Validators} from '@angular/forms';
 import { FileuploadService } from '../../shared/services/fileupload.service';
 import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
@@ -18,8 +17,7 @@ export class BookUploadComponent implements OnInit {
   @ViewChild('imgPreview') imgPreview: ElementRef;
   
   
-  constructor(private authService: AuthService,
-    private fb: FormBuilder,
+  constructor(private fb: FormBuilder,
     private fileUploadSvc: FileuploadService,
     private el: ElementRef,
     private toastyService: ToastyService, 
@@ -35,7 +33,7 @@ export class BookUploadComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.authService.setLogon(true);
+    
   }
 
   prepareSave(){

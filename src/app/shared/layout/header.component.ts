@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AuthService } from '../../shared/services/auth.service';
-import { Subscription }   from 'rxjs/Subscription';
+import {AuthService} from "../../shared/security/auth.service";
+import {AuthInfo} from "../../shared/security/auth-info";
+
 
 @Component({
   selector: 'app-header',
@@ -9,19 +10,16 @@ import { Subscription }   from 'rxjs/Subscription';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   
-  isLogon: boolean;
-  subscription: Subscription;
-  constructor(private authService:AuthService) { }
+  authInfo: AuthInfo;
+  constructor(private authService:AuthService) {
+  }
 
   ngOnInit() {
-    this.subscription = this.authService.isLoggedIn$.subscribe(result=>{
-      console.log(result);
-      this.isLogon = result;
-    })
+    this.authService.authInfo$.subscribe(authInfo =>  this.authInfo = authInfo);
   }
 
   ngOnDestroy(){
-    this.subscription.unsubscribe(); //prevent memory leak.
+    
   }
 
   logout(){

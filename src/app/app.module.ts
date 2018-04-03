@@ -13,12 +13,13 @@ import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { AngularFireStorageModule } from 'angularfire2/storage';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 
+import { AuthService } from './shared/security/auth.service';
+import { AuthGuard } from './shared/security/auth.guard';
 
 import {
   FooterComponent,
   HeaderComponent,
   BookServiceService,
-  AuthService,
   FileuploadService,
   BookfirebaseService,
   SharedModule
@@ -54,7 +55,7 @@ const rootRouting: ModuleWithProviders = RouterModule.forRoot([]);
     ToastyModule,
     NgxLocalStorageModule.forRoot()
   ],
-  providers: [BookServiceService, AuthService ,FileuploadService, BookfirebaseService],
+  providers: [BookServiceService ,FileuploadService, BookfirebaseService, AuthService, AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

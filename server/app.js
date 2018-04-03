@@ -234,10 +234,11 @@ app.get("/api/books/search", function (req, res) {
 
 
 
-
+//app.post('/upload-firestore', googleMulter.single('coverThumbnail'), (req, res)=>{
 app.post('/upload-firestore', googleMulter.single('coverThumbnail'), (req, res)=>{
     console.log('upload here ...');
     console.log(req.file);
+    console.log(req);
     uploadToFireBaseStorage(req.file).then((result=>{
         console.log("firebase stored -> " + result);
         saveGallery([req.file.originalname, result, req.body.remarks]).then((result)=>{
