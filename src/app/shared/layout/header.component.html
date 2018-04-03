@@ -36,10 +36,19 @@
       <li class="nav-item">
           <a class="nav-link" routerLinkActive="menu-active" *ngIf="!authInfo?.isLoggedIn()" routerLink="/register">Register</a>
       </li>
+      <li class="nav-item dropdown" *ngIf="authInfo?.isLoggedIn()">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-user-circle fa-lg"></i> {{authInfo.email || async}}
+          </a>
+          <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="#" (click)="logout()">Logout</a>
+          </div>
+        </li>
+
       <li class="nav-item">
-        <a class="nav-link" routerLinkActive="menu-active" *ngIf="authInfo?.isLoggedIn()" href="#" (click)="logout()">Logout</a>
-    </li>
-  </ul>
+         
+      </li>
+      </ul>
   </div>
   
 </nav>

@@ -25,7 +25,7 @@ export GOOGLE_APPLICATION_CREDENTIALS=/home/kenneth/Projects/book-catalogue-app/
 
 const  gstorage = googleStorage({
     projectId: "fsf2018r1",
-    keyFileName: process.env.FIREBASE_KEYFILENAME
+    keyFileName: process.env.GOOGLE_APPLICATION_CREDENTIALS
 });
 
 const bucket = gstorage.bucket('fsf2018r1.appspot.com');

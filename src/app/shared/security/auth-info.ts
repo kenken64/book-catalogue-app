@@ -1,13 +1,14 @@
 export class AuthInfo {
 
     constructor(
-        public $uid:string
+        public $uid:string,
+        public email:string
     ) {
 
     }
 
     isLoggedIn() {
-        return !!this.$uid;
+        return !!this.$uid; //null or undefined false  // with value return true
     }
 
 }
