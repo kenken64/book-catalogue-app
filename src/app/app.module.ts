@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { HomeModule } from './home/home.module';
 import { ToastyModule } from 'ng2-toasty';
 import { NgxLocalStorageModule } from 'ngx-localstorage';
+import { Ng4LoadingSpinnerModule } from 'ng4-loading-spinner';
 
 import {firebaseConfig} from "../environments/firebase.config";
 import {AngularFireModule} from "angularfire2";
@@ -15,6 +16,9 @@ import { AngularFireAuthModule } from 'angularfire2/auth';
 
 import { AuthService } from './shared/security/auth.service';
 import { AuthGuard } from './shared/security/auth.guard';
+import { HttpClientModule } from '@angular/common/http';
+import { AuthInterceptor } from './shared/security/auth.interceptor';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import {
   FooterComponent,
@@ -43,6 +47,7 @@ const rootRouting: ModuleWithProviders = RouterModule.forRoot([]);
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFirestoreModule,
     AngularFireAuthModule,
@@ -53,9 +58,17 @@ const rootRouting: ModuleWithProviders = RouterModule.forRoot([]);
     BookModule,
     SecurityModule,
     ToastyModule,
-    NgxLocalStorageModule.forRoot()
+    NgxLocalStorageModule.forRoot(),
+    Ng4LoadingSpinnerModule.forRoot()
   ],
-  providers: [BookServiceService ,FileuploadService, BookfirebaseService, AuthService, AuthGuard],
+  providers: [
+              { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
+              BookServiceService,
+              FileuploadService, 
+              BookfirebaseService, 
+              AuthService, 
+              AuthGuard,
+            ],          
   bootstrap: [AppComponent]
 })
 export class AppModule { }

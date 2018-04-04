@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {Validators, FormGroup, FormBuilder} from "@angular/forms";
 import {AuthService} from "../../shared/security/auth.service";
 import {Router} from "@angular/router";
+import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 
 @Component({
   selector: 'app-login',
@@ -12,8 +13,10 @@ export class LoginComponent implements OnInit {
 
   form:FormGroup;
 
-  constructor(private fb:FormBuilder, private authService: AuthService,
-                private router:Router) {
+  constructor(private fb:FormBuilder,
+                private authService: AuthService,
+                private router:Router,
+                private spinnerService: Ng4LoadingSpinnerService) {
 
       this.form = this.fb.group({
           email: ['',Validators.required],
@@ -28,12 +31,17 @@ export class LoginComponent implements OnInit {
 
 
   login() {
-
-      const formValue = this.form.value;
-
-      this.authService.login(formValue.email, formValue.password)
+    this.spinnerService.show();
+    const formValue = this.form.value;
+    this.authService.login(formValue.email, formValue.password)
           .subscribe(
-              () => this.router.navigate([''])
+              () => {
+                this.authService.setTokenIdToLocalstorage();
+                setTimeout(function() {
+                    this.spinnerService.hide();
+                  }.bind(this), 3000);
+                this.router.navigate(['']);
+              }
           );
   }
 

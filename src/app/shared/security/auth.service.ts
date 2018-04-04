@@ -5,6 +5,7 @@ import {AngularFireAuth } from "angularfire2/auth";
 import {AuthInfo} from "./auth-info";
 import {Router} from "@angular/router";
 import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
+import {LocalStorageService} from 'ngx-localstorage';
 
 import * as firebase from 'firebase/app';
 
@@ -16,10 +17,10 @@ export class AuthService {
 
   authInfo$: BehaviorSubject<AuthInfo> = new BehaviorSubject<AuthInfo>(AuthService.UNKNOWN_USER);
 
-
     constructor(private afAuth: AngularFireAuth, private router:Router,
         private toastyService: ToastyService, 
-        private toastyConfig: ToastyConfig) {
+        private toastyConfig: ToastyConfig,
+        private _storageService: LocalStorageService) {
 
     }
 
@@ -35,29 +36,35 @@ export class AuthService {
         return this.fromFirebaseAuthPromise(this.afAuth.auth.createUserWithEmailAndPassword(email, password));
     }
 
+    setTokenIdToLocalstorage(){
+        this.afAuth.auth.currentUser.getIdToken().then(idToken => {
+            this._storageService.set('firebaseIdToken', idToken);
+        });
+    }
+
     fromFirebaseAuthPromise(promise):Observable<any> {
-
         const subject = new Subject<any>();
-
         promise
             .then(res => {
-                    console.log(this.afAuth.auth.currentUser.email);
-                    const authInfo = new AuthInfo(this.afAuth.auth.currentUser.uid, this.afAuth.auth.currentUser.email);
+                    const authInfo = new AuthInfo(
+                            this.afAuth.auth.currentUser.uid, 
+                            this.afAuth.auth.currentUser.email);
                     this.authInfo$.next(authInfo);
                     subject.next(res);
                     subject.complete();
+                   
                 },
                 err => {
                     this.authInfo$.error(err);
                     subject.error(err);
                     subject.complete();
                 });
-
         return subject.asObservable();
     }
 
 
     logout() {
+        this._storageService.remove('firebaseIdToken');
         this.afAuth.auth.signOut();
         this.authInfo$.next(AuthService.UNKNOWN_USER);
         this.router.navigate(['']);

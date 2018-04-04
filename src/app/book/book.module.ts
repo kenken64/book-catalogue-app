@@ -21,6 +21,7 @@ import { BookUploadComponent } from './book-upload/book-upload.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BookListComponent } from './book-list/book-list.component';
 import {AuthGuard} from "../shared/security/auth.guard";
+import { EditbookComponent } from './editbook/editbook.component';
 
 const booksRouting: ModuleWithProviders = RouterModule.forChild([
   {
@@ -92,6 +93,6 @@ const booksRouting: ModuleWithProviders = RouterModule.forChild([
     PaginationModule.forRoot(),
     ReactiveFormsModule
   ],
-  declarations: [BookSearchComponent, BookDetailsComponent, AddBookComponent, BookUploadComponent, BookListComponent]
+  declarations: [BookSearchComponent, BookDetailsComponent, AddBookComponent, BookUploadComponent, BookListComponent, EditbookComponent]
 })
 export class BookModule { }
