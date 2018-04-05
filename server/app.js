@@ -10,7 +10,12 @@ const express = require("express"),
 const admin = require('firebase-admin');
 const keys = require(process.env.FIREBASE_KEY);
 var session = require('express-session')
-
+var mailgun = require('mailgun.js');
+var mg = mailgun.client({
+    username: 'api',
+    key: process.env.MAILGUN_API_KEY || '',
+    public_key: process.env.MAILGUN_PUBLIC_KEY || ''
+  });
 admin.initializeApp({
     databaseURL: process.env.FIREBASE_DB_URL,
     credential: admin.credential.cert(keys)
@@ -81,6 +86,7 @@ var pool = mysql.createPool({
 
 const findAllBooks = "SELECT id, title, cover_thumbnail, author_firstname, author_lastname FROM books where email=? LIMIT ? OFFSET ?";
 const findOneBook = "SELECT * FROM books WHERE id = ?";
+const findAllPublicRecipe = "SELECT * FROM reciepe WHERE isPublic = ?";
 const deleteOneBook = "DELETE FROM books WHERE id = ?";
 const updateBook = "UPDATE books SET title = ?, author_firstname = ?, author_lastname = ? WHERE id = ?";
 const saveOneBook = "INSERT INTO books (title, cover_thumbnail, author_firstname, author_lastname, email) VALUES (? ,? ,? ,?, ?)";
@@ -102,11 +108,15 @@ function isAuthenticate(req,res,next){
                 if(result != null){
                     req.session.firebaseEmail = result.email;
                     return next();
+                }{
+                    throw new Error('Firebase unable to verify');
                 }
             }).catch(error => {
                 console.log(error);
                 return res.status(403).json({error: 'Access Denied with firebase verification error'});
             });    
+        }else{
+            return res.status(403).json({error: 'Access Denied'});
         }
     }else{
         return res.status(403).json({error: 'Access Denied'});
@@ -181,6 +191,15 @@ app.post("/api/books", isAuthenticate, function (req, res) {
     var email = req.session.firebaseEmail;
     saveOne([req.body.book_title, req.body.imageUrl ,req.body.author_firstname, req.body.author_lastname, email])
         .then(function (result) {
+            mg.messages.create('sandboxe2ef77d2dea04510b84b5c1423ab1087.mailgun.org', {
+                from: "BookWorm User <noreply@bookworm.sg>",
+                to: [email],
+                subject: `New Book Added ${req.body.book_title}`,
+                text: `Yahoo you got a new book added! ${req.body.book_title}`,
+                html: `<h1>Yahoo you got a new book added! ${req.body.book_title}</h1> <img src="https://firebasestorage.googleapis.com/v0/b/fsf2018r1.appspot.com/o/1522739894784_tombraider.png?alt=media">`
+              })
+              .then(msg => console.log(msg)) // logs response data
+              .catch(err => console.log(err)); // logs any error
             res.status(200).json(result);
             console.log(result);
         })
@@ -277,7 +296,7 @@ app.get("/api/books/search", isAuthenticate, function (req, res) {
 
 
 //app.post('/upload-firestore',isAuthenticate,  googleMulter.single('coverThumbnail'), (req, res)=>{
-app.post('/upload-firestore', googleMulter.single('coverThumbnail'), (req, res)=>{
+app.post('/upload-firestore', isAuthenticate, googleMulter.single('coverThumbnail'), (req, res)=>{
     console.log('upload here ...');
     console.log(req.file);
     console.log(req);
