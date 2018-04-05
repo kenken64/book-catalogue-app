@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, OnInit }       from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Ingredient } from './Ingredient';
-import { Recipe } from './Recipe';
+import { Recipe } from './recipe';
 
 @Component({
   selector: 'app-editbook',

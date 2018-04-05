@@ -22,11 +22,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { AuthInterceptor } from './shared/security/auth.interceptor';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
-// social login
-import { SocialLoginModule, AuthServiceConfig } from "angularx-social-login";
-import { GoogleLoginProvider} from "angularx-social-login";
-
-
 import {
   FooterComponent,
   HeaderComponent,
@@ -45,17 +40,6 @@ import {
 } from './security';
 
 const rootRouting: ModuleWithProviders = RouterModule.forRoot([]);
-
-let config = new AuthServiceConfig([
-  {
-    id: GoogleLoginProvider.PROVIDER_ID,
-    provider: new GoogleLoginProvider(environment.google_plus_oauth_client_key)
-  }
-]);
-
-export function provideConfig() {
-  return config;
-}
 
 @NgModule({
   declarations: [
@@ -77,8 +61,7 @@ export function provideConfig() {
     SecurityModule,
     ToastyModule,
     NgxLocalStorageModule.forRoot(),
-    Ng4LoadingSpinnerModule.forRoot(),
-    SocialLoginModule
+    Ng4LoadingSpinnerModule.forRoot()
   ],
   providers: [
               { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
@@ -86,11 +69,7 @@ export function provideConfig() {
               FileuploadService, 
               BookfirebaseService, 
               AuthServiceFirebase, 
-              AuthGuard,
-              {
-                provide: AuthServiceConfig,
-                useFactory: provideConfig
-              }
+              AuthGuard
             ],          
   bootstrap: [AppComponent]
 })

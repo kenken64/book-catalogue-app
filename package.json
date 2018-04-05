@@ -25,7 +25,6 @@
     "@types/request": "^2.47.0",
     "angular2-uuid": "^1.1.1",
     "angularfire2": "^5.0.0-rc.6",
-    "angularx-social-login": "^1.1.8",
     "bootstrap": "^4.0.0",
     "core-js": "^2.4.1",
     "firebase": "^4.12.0",
