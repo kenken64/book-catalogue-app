@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {Validators, FormGroup, FormBuilder} from "@angular/forms";
+import { Validators, FormGroup, FormBuilder} from "@angular/forms";
 import { AuthServiceFirebase } from "../../shared/security/auth.service";
-import {Router} from "@angular/router";
+import { Router} from "@angular/router";
 import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
 
 @Component({
@@ -29,8 +29,15 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
   }
 
-  signInWithGoogle(): void {
-
+  signInWithGoogle() {
+    console.log("social google login...");
+    console.log("social google login...");
+    this.authService.googleLogin().then((result)=>{
+      console.log(result);
+      //this.router.navigate([' ']);
+    }).catch((error)=> console.log(error));
+    console.log("social google login...");
+    
   }
 
 

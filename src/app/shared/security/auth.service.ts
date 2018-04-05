@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {Observable, Subject, BehaviorSubject} from "rxjs/Rx";
 import { catchError } from 'rxjs/operators';
 import {AngularFireAuth } from "angularfire2/auth";
+
 import {AuthInfo} from "./auth-info";
 import {Router} from "@angular/router";
 import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
@@ -13,15 +14,17 @@ import * as firebase from 'firebase/app';
 @Injectable()
 export class AuthServiceFirebase {
 
-  static UNKNOWN_USER = new AuthInfo(null, null);
+    static UNKNOWN_USER = new AuthInfo(null, null);
 
-  authInfo$: BehaviorSubject<AuthInfo> = new BehaviorSubject<AuthInfo>(AuthServiceFirebase.UNKNOWN_USER);
-
+    authInfo$: BehaviorSubject<AuthInfo> = new BehaviorSubject<AuthInfo>(AuthServiceFirebase.UNKNOWN_USER);
+    authState: any = null;
     constructor(private afAuth: AngularFireAuth, private router:Router,
         private toastyService: ToastyService, 
         private toastyConfig: ToastyConfig,
         private _storageService: LocalStorageService) {
-
+            this.afAuth.authState.subscribe((auth) => {
+                this.authState = auth
+            });
     }
 
     login(email, password):Observable<AuthInfo> {
@@ -29,6 +32,26 @@ export class AuthServiceFirebase {
         .pipe(
             catchError(this.handleError('login', AuthInfo))
         );
+    }
+
+    
+
+    googleLogin() {
+        var provider = new firebase.auth.GoogleAuthProvider();
+        return this.socialSignIn(provider);
+    }
+
+    private socialSignIn(provider) {
+        return this.afAuth.auth.signInWithRedirect(provider)
+          .then((credential) =>  {
+              this.authState = credential.user
+              this.updateUserData()
+          })
+          .catch(error => console.log(error));
+    }
+    
+    private updateUserData(){
+        console.log("call backend end point to update userdata....");
     }
 
 
