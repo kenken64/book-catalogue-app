@@ -9,16 +9,23 @@ import { NgxLocalStorageModule } from 'ngx-localstorage';
 import { Ng4LoadingSpinnerModule } from 'ng4-loading-spinner';
 
 import {firebaseConfig} from "../environments/firebase.config";
+import { environment } from "../environments/environment";
+
 import {AngularFireModule} from "angularfire2";
 import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { AngularFireStorageModule } from 'angularfire2/storage';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 
-import { AuthService } from './shared/security/auth.service';
+import { AuthServiceFirebase } from './shared/security/auth.service';
 import { AuthGuard } from './shared/security/auth.guard';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthInterceptor } from './shared/security/auth.interceptor';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
+
+// social login
+import { SocialLoginModule, AuthServiceConfig } from "angularx-social-login";
+import { GoogleLoginProvider} from "angularx-social-login";
+
 
 import {
   FooterComponent,
@@ -38,6 +45,17 @@ import {
 } from './security';
 
 const rootRouting: ModuleWithProviders = RouterModule.forRoot([]);
+
+let config = new AuthServiceConfig([
+  {
+    id: GoogleLoginProvider.PROVIDER_ID,
+    provider: new GoogleLoginProvider(environment.google_plus_oauth_client_key)
+  }
+]);
+
+export function provideConfig() {
+  return config;
+}
 
 @NgModule({
   declarations: [
@@ -59,15 +77,20 @@ const rootRouting: ModuleWithProviders = RouterModule.forRoot([]);
     SecurityModule,
     ToastyModule,
     NgxLocalStorageModule.forRoot(),
-    Ng4LoadingSpinnerModule.forRoot()
+    Ng4LoadingSpinnerModule.forRoot(),
+    SocialLoginModule
   ],
   providers: [
               { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
               BookServiceService,
               FileuploadService, 
               BookfirebaseService, 
-              AuthService, 
+              AuthServiceFirebase, 
               AuthGuard,
+              {
+                provide: AuthServiceConfig,
+                useFactory: provideConfig
+              }
             ],          
   bootstrap: [AppComponent]
 })

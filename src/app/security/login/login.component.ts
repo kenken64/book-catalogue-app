@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {Validators, FormGroup, FormBuilder} from "@angular/forms";
-import {AuthService} from "../../shared/security/auth.service";
+import { AuthServiceFirebase } from "../../shared/security/auth.service";
 import {Router} from "@angular/router";
 import { Ng4LoadingSpinnerService } from 'ng4-loading-spinner';
+import { AuthService } from "angularx-social-login";
+import { GoogleLoginProvider } from "angularx-social-login";
 
 @Component({
   selector: 'app-login',
@@ -14,9 +16,10 @@ export class LoginComponent implements OnInit {
   form:FormGroup;
 
   constructor(private fb:FormBuilder,
-                private authService: AuthService,
+                private authService: AuthServiceFirebase,
                 private router:Router,
-                private spinnerService: Ng4LoadingSpinnerService) {
+                private spinnerService: Ng4LoadingSpinnerService,
+                private authServiceSocial: AuthService) {
 
       this.form = this.fb.group({
           email: ['',Validators.required],
@@ -27,6 +30,10 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  signInWithGoogle(): void {
+    this.authServiceSocial.signIn(GoogleLoginProvider.PROVIDER_ID);
   }
 
 

@@ -43,6 +43,16 @@ const booksRouting: ModuleWithProviders = RouterModule.forChild([
           ]
       },
       {
+        path: 'edit',
+        children: [
+            {
+                path: '',
+                component: EditbookComponent,
+                canActivate: [AuthGuard]
+            },
+        ]
+      },
+      {
         path: 'list',
         children: [
             {

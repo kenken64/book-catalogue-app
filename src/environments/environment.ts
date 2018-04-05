@@ -6,5 +6,6 @@
 export const environment = {
   production: false,
   ApiUrl: 'http://localhost:3000',
-  itemPerPage: 20
+  itemPerPage: 20,
+  google_plus_oauth_client_key: '707922363156-jedhkij6kd9stqjpkai40fj0aag69u34.apps.googleusercontent.com'
 };

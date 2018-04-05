@@ -44,3 +44,19 @@
   text-decoration: none;
   color:#B56162;
 }
+
+.btn-googleplus {
+  background: #E93F2E;
+  border-radius: 0;
+  color: #fff;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #b72213;
+}
+.btn-googleplus:link, .btn-googleplus:visited {
+  color: #fff;
+}
+.btn-googleplus:active, .btn-googleplus:hover {
+  background: #b72213;
+  color: #fff;
+}

@@ -11,11 +11,11 @@ import * as firebase from 'firebase/app';
 
 
 @Injectable()
-export class AuthService {
+export class AuthServiceFirebase {
 
   static UNKNOWN_USER = new AuthInfo(null, null);
 
-  authInfo$: BehaviorSubject<AuthInfo> = new BehaviorSubject<AuthInfo>(AuthService.UNKNOWN_USER);
+  authInfo$: BehaviorSubject<AuthInfo> = new BehaviorSubject<AuthInfo>(AuthServiceFirebase.UNKNOWN_USER);
 
     constructor(private afAuth: AngularFireAuth, private router:Router,
         private toastyService: ToastyService, 
@@ -66,7 +66,7 @@ export class AuthService {
     logout() {
         this._storageService.remove('firebaseIdToken');
         this.afAuth.auth.signOut();
-        this.authInfo$.next(AuthService.UNKNOWN_USER);
+        this.authInfo$.next(AuthServiceFirebase.UNKNOWN_USER);
         this.router.navigate(['']);
 
     }
