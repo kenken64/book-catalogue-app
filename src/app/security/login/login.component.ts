@@ -46,14 +46,17 @@ export class LoginComponent implements OnInit {
     const formValue = this.form.value;
     this.authService.login(formValue.email, formValue.password)
           .subscribe(
-              () => {
+              (result) => {
+                console.log(result);
                 this.authService.setTokenIdToLocalstorage();
+                
                 setTimeout(function() {
                     this.spinnerService.hide();
-                  }.bind(this), 3000);
-                this.router.navigate(['']);
+                    this.router.navigate(['']);
+                  }.bind(this), 4500);
+                
               }
-          );
+          )
   }
 
 } 

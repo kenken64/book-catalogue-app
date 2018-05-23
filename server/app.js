@@ -204,7 +204,8 @@ app.post("/api/books", isAuthenticate, function (req, res) {
             console.log(result);
         })
         .catch(function (err) {
-            res.status(500).end();
+            console.log(err);
+            res.status(500).send(err);
         });
 });
 

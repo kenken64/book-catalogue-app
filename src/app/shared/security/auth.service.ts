@@ -37,19 +37,25 @@ export class AuthServiceFirebase {
     
 
     googleLogin() {
-        var provider = new firebase.auth.GoogleAuthProvider();
-        return this.socialSignIn(provider);
+        return new Promise<any>((resolve, reject) => {
+            let provider = new firebase.auth.GoogleAuthProvider();
+            provider.addScope('profile');
+            provider.addScope('email');
+            this.afAuth.auth
+            .signInWithPopup(provider)
+            .then(res => {
+                this.updateUserData()
+                resolve(res);
+            }, err => {
+              console.log(err);
+              reject(err);
+            })
+          })
+
+        //var provider = new firebase.auth.GoogleAuthProvider();
+        //return this.socialSignIn(provider);
     }
 
-    private socialSignIn(provider) {
-        return this.afAuth.auth.signInWithRedirect(provider)
-          .then((credential) =>  {
-              this.authState = credential.user
-              this.updateUserData()
-          })
-          .catch(error => console.log(error));
-    }
-    
     private updateUserData(){
         console.log("call backend end point to update userdata....");
     }
@@ -79,6 +85,7 @@ export class AuthServiceFirebase {
                 },
                 err => {
                     this.authInfo$.error(err);
+                    console.log("err1 " + err);
                     subject.error(err);
                     subject.complete();
                 });
