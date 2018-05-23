@@ -7,7 +7,22 @@ const express = require("express"),
      multer = require('multer'),
      googleStorage = require('@google-cloud/storage');
 
+const admin = require('firebase-admin');
+const keys = require(process.env.FIREBASE_KEY);
+var session = require('express-session')
+var mailgun = require('mailgun.js');
+var mg = mailgun.client({
+    username: 'api',
+    key: process.env.MAILGUN_API_KEY || '',
+    public_key: process.env.MAILGUN_PUBLIC_KEY || ''
+  });
+admin.initializeApp({
+    databaseURL: process.env.FIREBASE_DB_URL,
+    credential: admin.credential.cert(keys)
+});
+
 var app = express();
+
 /**
  * service firebase.storage {
   match /b/{bucket}/o {
@@ -24,11 +39,11 @@ export GOOGLE_APPLICATION_CREDENTIALS=/home/kenneth/Projects/book-catalogue-app/
 */
 
 const  gstorage = googleStorage({
-    projectId: "fsf2018r1",
-    keyFileName: process.env.FIREBASE_KEYFILENAME
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    keyFileName: process.env.GOOGLE_APPLICATION_CREDENTIALS
 });
 
-const bucket = gstorage.bucket('fsf2018r1.appspot.com');
+const bucket = gstorage.bucket(process.env.FIREBASE_BUCKET_NAME);
 
 const googleMulter = multer({
     storage: multer.memoryStorage(),
@@ -47,8 +62,15 @@ var storage = multer.diskStorage({
   })
   
 var diskUpload = multer({ storage: storage })
+app.use(session({ 
+        secret: 'thisisasecretbetweenus', 
+        resave: false,
+        saveUninitialized: true,
+        cookie: { maxAge: 60000 }}))
 
-app.use(cors())
+app.use(cors({credentials: true, 
+    origin: [undefined, 'http://localhost:4200', 'http://localhost', 
+    'http://192.168.1.88', 'http://192.168.1.88:4200']  }));
 
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(bodyParser.json({limit: '50mb'}));
@@ -62,17 +84,44 @@ var pool = mysql.createPool({
     connectionLimit: process.env.MYSQL_CONNECTION
 });
 
-const findAllBooks = "SELECT id, title, cover_thumbnail, author_firstname, author_lastname FROM books LIMIT ? OFFSET ?";
+const findAllBooks = "SELECT id, title, cover_thumbnail, author_firstname, author_lastname FROM books where email=? LIMIT ? OFFSET ?";
 const findOneBook = "SELECT * FROM books WHERE id = ?";
+const findAllPublicRecipe = "SELECT * FROM reciepe WHERE isPublic = ?";
 const deleteOneBook = "DELETE FROM books WHERE id = ?";
 const updateBook = "UPDATE books SET title = ?, author_firstname = ?, author_lastname = ? WHERE id = ?";
-const saveOneBook = "INSERT INTO books (title, cover_thumbnail, author_firstname, author_lastname) VALUES (? ,? ,? ,?)";
-const saveOneGallery = "INSERT INTO gallery (filename, fileUrl, remarks) VALUES (? ,? ,?)";
+const saveOneBook = "INSERT INTO books (title, cover_thumbnail, author_firstname, author_lastname, email) VALUES (? ,? ,? ,?, ?)";
+const saveOneGallery = "INSERT INTO gallery (filename, fileUrl, remarks, email) VALUES (? ,? ,?, ?)";
 
-const searchBooksByCriteria = "SELECT * FROM books WHERE (title LIKE ?) || author_firstname LIKE ? || author_lastname LIKE ?";
-const searchBookByTitle = "SELECT * FROM books WHERE title LIKE ?";
-const searchBookByName = "SELECT * FROM books WHERE author_firstname LIKE ? || author_lastname LIKE ?";
+const searchBooksByCriteria = "SELECT * FROM books WHERE email=? AND (title LIKE ?) || author_firstname LIKE ? || author_lastname LIKE ?";
+const searchBookByTitle = "SELECT * FROM books WHERE email=? AND  title LIKE ?";
+const searchBookByName = "SELECT * FROM books WHERE email=? AND  author_firstname LIKE ? || author_lastname LIKE ?";
 const NODE_PORT = process.env.PORT;
+
+function isAuthenticate(req,res,next){
+    if(req.headers.authorization != null){
+        console.log(req.headers.authorization);
+        var authIdToken = req.headers.authorization.split(' ')[1];
+        console.log("authIdToken" + authIdToken);
+        if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Token' ||
+            req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+            admin.auth().verifyIdToken(req.headers.authorization.split(' ')[1]).then(function(result){
+                if(result != null){
+                    req.session.firebaseEmail = result.email;
+                    return next();
+                }{
+                    throw new Error('Firebase unable to verify');
+                }
+            }).catch(error => {
+                console.log(error);
+                return res.status(403).json({error: 'Access Denied with firebase verification error'});
+            });    
+        }else{
+            return res.status(403).json({error: 'Access Denied'});
+        }
+    }else{
+        return res.status(403).json({error: 'Access Denied'});
+    } 
+}
 
 var makeQuery = function (sql, pool) {
     console.log(sql);
@@ -110,12 +159,14 @@ var searchBooks = makeQuery(searchBooksByCriteria, pool);
 var searchByTitle = makeQuery(searchBookByTitle, pool);
 var searchByName = makeQuery(searchBookByName, pool);
 
-app.get("/api/books", function (req, res) {
+app.get("/api/books", isAuthenticate, function (req, res) {
     console.log(req.query.limit);
     console.log(req.query.offset);
     var limit = parseInt(req.query.limit) || 50;
     var offset = parseInt(req.query.offset) || 0;
-    findAll([limit, offset])
+    var email = req.session.firebaseEmail;
+    console.log(email);
+    findAll([email, limit, offset])
         .then(function (results) {
             res.status(200).json(results);
         })
@@ -124,7 +175,7 @@ app.get("/api/books", function (req, res) {
         });
 });
 
-app.get("/api/book/:bookId", function (req, res) {
+app.get("/api/book/:bookId", isAuthenticate, function (req, res) {
     console.log(req.params.bookId);
     findOne([req.params.bookId])
         .then(function (results) {
@@ -135,20 +186,30 @@ app.get("/api/book/:bookId", function (req, res) {
         });
 });
 
-app.post("/api/books", function (req, res) {
+app.post("/api/books", isAuthenticate, function (req, res) {
     console.log(req.body);
-    
-    saveOne([req.body.book_title, req.body.imageUrl ,req.body.author_firstname, req.body.author_lastname])
+    var email = req.session.firebaseEmail;
+    saveOne([req.body.book_title, req.body.imageUrl ,req.body.author_firstname, req.body.author_lastname, email])
         .then(function (result) {
+            mg.messages.create('sandboxe2ef77d2dea04510b84b5c1423ab1087.mailgun.org', {
+                from: "BookWorm User <noreply@bookworm.sg>",
+                to: [email],
+                subject: `New Book Added ${req.body.book_title}`,
+                text: `Yahoo you got a new book added! ${req.body.book_title}`,
+                html: `<h1>Yahoo you got a new book added! ${req.body.book_title}</h1> <img src="https://firebasestorage.googleapis.com/v0/b/fsf2018r1.appspot.com/o/1522739894784_tombraider.png?alt=media">`
+              })
+              .then(msg => console.log(msg)) // logs response data
+              .catch(err => console.log(err)); // logs any error
             res.status(200).json(result);
             console.log(result);
         })
         .catch(function (err) {
-            res.status(500).end();
+            console.log(err);
+            res.status(500).send(err);
         });
 });
 
-app.delete("/api/books/:delId", function (req, res) {
+app.delete("/api/books/:delId", isAuthenticate, function (req, res) {
     console.log(req.body);
     res.status(200).json({});
     console.log(req.params.delId);
@@ -162,7 +223,7 @@ app.delete("/api/books/:delId", function (req, res) {
         });
 });
 
-app.put("/api/books", function (req, res) {
+app.put("/api/books", isAuthenticate, function (req, res) {
     console.log(req.body);
     updateOne([req.body.book_title, req.body.author_firstname, req.body.author_lastname, req.body.id])
         .then(function (result) {
@@ -175,15 +236,16 @@ app.put("/api/books", function (req, res) {
         });
 });
 
-app.get("/api/books/search", function (req, res) {
-    console.log(req.query);
+app.get("/api/books/search", isAuthenticate, function (req, res) {
     var searchType = req.query.searchType;
     var keyword = req.query.keyword;
+    var email = req.session.firebaseEmail;
+    console.log(">>> " + email);
     if(typeof searchType === 'string' && searchType != '1') {
         if(searchType=='Title'){
             console.log('search by title');
             var title = "%" + keyword + "%";
-            searchByTitle([title])
+            searchByTitle([email, title])
                 .then(function (results) {
                     res.status(200).json(results);
                     //console.log(results);
@@ -199,7 +261,7 @@ app.get("/api/books/search", function (req, res) {
             if(!authorName[1]) authorName[1] = authorName[0];
             var firstname = "%" + authorName[0] + "%";
             var lastname = "%" + authorName[1] + "%";
-                searchByName([firstname, lastname])
+                searchByName([email, firstname, lastname])
                 .then(function (results) {
                     res.status(200).json(results);
                     //console.log(results);
@@ -220,7 +282,7 @@ app.get("/api/books/search", function (req, res) {
         console.log(title);
         console.log(firstname);
         console.log(lastname);
-        searchBooks([title, firstname, lastname])
+        searchBooks([email, title, firstname, lastname])
             .then(function (results) {
                 res.status(200).json(results);
                 //console.log(results);
@@ -234,24 +296,28 @@ app.get("/api/books/search", function (req, res) {
 
 
 
-
-app.post('/upload-firestore', googleMulter.single('coverThumbnail'), (req, res)=>{
+//app.post('/upload-firestore',isAuthenticate,  googleMulter.single('coverThumbnail'), (req, res)=>{
+app.post('/upload-firestore', isAuthenticate, googleMulter.single('coverThumbnail'), (req, res)=>{
     console.log('upload here ...');
     console.log(req.file);
-    uploadToFireBaseStorage(req.file).then((result=>{
-        console.log("firebase stored -> " + result);
-        saveGallery([req.file.originalname, result, req.body.remarks]).then((result)=>{
-            console.log(result);
-        }).catch((error)=>{
-            console.log("error ->" + error);
+    console.log(req);
+    if(req.file != null){
+        uploadToFireBaseStorage(req.file).then((result=>{
+            console.log("firebase stored -> " + result);
+            var email = req.session.firebaseEmail;
+            saveGallery([req.file.originalname, result, req.body.remarks,email]).then((result)=>{
+                console.log(result);
+            }).catch((error)=>{
+                console.log("error ->" + error);
+            })
+        })).catch((error)=>{
+            console.log(error);
         })
-    })).catch((error)=>{
-        console.log(error);
-    })
+    }
     res.status(200).json({});
 })
 
-app.post('/upload', diskUpload.single('coverThumbnail'), (req, res)=>{
+app.post('/upload', isAuthenticate, diskUpload.single('coverThumbnail'), (req, res)=>{
     console.log('upload here ...');
     
     res.status(200).json(req.file);
@@ -289,6 +355,11 @@ const uploadToFireBaseStorage = function(file) {
 
 app.use(express.static(__dirname + "/public"));
 
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "x-auth, Authorization, Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 app.listen(NODE_PORT, function () {
     console.info("App server started on port " + NODE_PORT);
 });

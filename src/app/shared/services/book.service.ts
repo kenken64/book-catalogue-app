@@ -8,26 +8,28 @@ import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
 import { BookCriteria } from '../../shared/models/book-criteria';
 import { BookResult } from '../../shared/models/book-result';
 import { Book } from '../../shared/models/book';
-
-const httpOptions = { 
-  headers: new HttpHeaders({'Content-Type': 'application/json'})
-};
+import {AngularFireAuth } from "angularfire2/auth";
+import {LocalStorageService} from 'ngx-localstorage';
 
 @Injectable()
 export class BookServiceService {
   private bookRootApiUrl  = `${environment.ApiUrl}/api/books`;
-  private serachBookApiURL = this.bookRootApiUrl + "/search";
+  private searchBookApiURL = this.bookRootApiUrl + "/search";
   
   constructor(private httpClient: HttpClient, 
     private toastyService: ToastyService, 
-    private toastyConfig: ToastyConfig) {
+    private toastyConfig: ToastyConfig,
+    private afAuth: AngularFireAuth,private _storageService: LocalStorageService) {
 
   }
 
   public addBook (book: Book): Observable<Book> {
     console.log(book);
     console.log(this.bookRootApiUrl);
-    return this.httpClient.post<Book>(this.bookRootApiUrl, book, httpOptions)
+    let idToken= this._storageService.get('firebaseIdToken');
+    return this.httpClient.post<Book>(this.bookRootApiUrl, 
+      book,
+      {headers: new HttpHeaders().set('Authorization', `Bearer ${idToken}`)})
       .pipe(
         catchError(this.handleError('addBook', book))
       );
@@ -36,7 +38,10 @@ export class BookServiceService {
   public updateBook (book: Book): Observable<Book> {
     console.log(book);
     console.log(this.bookRootApiUrl);
-    return this.httpClient.put<Book>(this.bookRootApiUrl, book, httpOptions)
+    let idToken= this._storageService.get('firebaseIdToken');
+    return this.httpClient.put<Book>(this.bookRootApiUrl, 
+      book,
+      {headers: new HttpHeaders().set('Authorization', `Bearer ${idToken}`)})
       .pipe(
         catchError(this.handleError('updateBook', book))
       );
@@ -46,17 +51,22 @@ export class BookServiceService {
     console.log(book);
     console.log(book.id);
     console.log(this.bookRootApiUrl);
+    let idToken= this._storageService.get('firebaseIdToken');
     const deleteUrl = `${this.bookRootApiUrl}/${book.id}`; // DELETE api/books/1
     console.log(deleteUrl);
-    return this.httpClient.delete<Book>(deleteUrl, httpOptions)
+    return this.httpClient.delete<Book>(deleteUrl,
+      {headers: new HttpHeaders().set('Authorization', `Bearer ${idToken}`)})
       .pipe(
         catchError(this.handleError('deleteBook', book))
       );
   }
 
   public searchBooks(model) : Observable<BookResult[]> {
-    var getURL = `${this.serachBookApiURL}?keyword=${model.keyword}&searchType=${model.searchType}&sortBy=${model.sortBy}&currentPerPage=${model.currentPerPage}&itemsPerPage=${model.itemsPerPage}`;
-    return this.httpClient.get<BookResult[]>(getURL, httpOptions)
+    let idToken= this._storageService.get('firebaseIdToken');
+    var getURL = `${this.searchBookApiURL}?keyword=${model.keyword}&searchType=${model.searchType}&sortBy=${model.sortBy}&currentPerPage=${model.currentPerPage}&itemsPerPage=${model.itemsPerPage}`;
+    return this.httpClient.get<BookResult[]>(getURL, 
+      {headers: new HttpHeaders().set('Authorization', `Bearer ${idToken}`)}
+    )
       .pipe(catchError(this.handleError<BookResult[]>('searchBooks')));
 
   }

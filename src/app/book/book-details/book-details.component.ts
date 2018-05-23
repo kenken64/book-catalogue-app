@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../../shared/services/auth.service';
 import { BookfirebaseService } from '../../shared/services/bookfirebase.service';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
@@ -14,8 +13,7 @@ export class BookDetailsComponent implements OnInit {
   form:FormGroup;
   tocs = new Array();
 
-  constructor(private authService: AuthService,
-    private fb:FormBuilder,
+  constructor(private fb:FormBuilder,
     private bookfirebase: BookfirebaseService,
     private toastyService: ToastyService, 
     private toastyConfig: ToastyConfig) { 
@@ -29,7 +27,7 @@ export class BookDetailsComponent implements OnInit {
     }
 
   ngOnInit() {
-    this.authService.setLogon(true);
+
   }
 
   isErrorVisible(field:string, error:string) {

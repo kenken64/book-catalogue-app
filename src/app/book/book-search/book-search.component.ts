@@ -11,7 +11,6 @@ import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
 
 import { environment } from '../../../environments/environment';
-import { AuthService } from '../../shared/services/auth.service';
 
 @Component({
   selector: 'app-book-search',
@@ -39,13 +38,11 @@ export class BookSearchComponent implements OnInit {
   constructor( private bookService: BookServiceService,
     private modalService: BsModalService,
     private toastyService: ToastyService, 
-    private toastyConfig: ToastyConfig,
-    private authService: AuthService ) { 
+    private toastyConfig: ToastyConfig ) { 
     this.booksObservable$ = this.bookService.searchBooks(this.model);
   }
 
   ngOnInit() {
-    this.authService.setLogon(true);
     this.booksObservable$.subscribe((x) => {
       this.totalItems = x.length;
       this.result = x.slice(this.indexOnPage, this.itemsPerPage);

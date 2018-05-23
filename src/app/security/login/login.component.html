@@ -1,17 +1,22 @@
 <div class="container">
-  <form class="form-signin">
-    <h2 class="form-signin-heading">Please sign in</h2>
-    <label for="inputEmail" class="sr-only">Email address</label>
-    <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
-    <label for="inputPassword" class="sr-only">Password</label>
-    <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-    <div class="checkbox">
-      <label>
-        <input type="checkbox" value="remember-me"> Remember me
-      </label>
-    </div>
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-    <button class="btn btn-lg btn-primary btn-block" (click)="goHome()">Back</button>
-  </form>
-</div> <!-- /container -->
+    <form autocomplete="off" novalidate class="login-form" [formGroup]="form">
 
+    <fieldset>
+        <legend>Sign In</legend>
+        <div class="form-group row">
+            <input name="email" class="form-control" formControlName="email" placeholder="a@a.com">
+        </div>
+        <div class="form-group row">
+            <input name="password" class="form-control" formControlName="password" type="password" placeholder="*****">
+        </div>
+    </fieldset>
+
+    <button class="btn btn-primary" (click)="login()">Sign In</button>
+    
+    <a href="#" title="Google+" (click)="signInWithGoogle()" class="btn btn-googleplus btn-xs"><i class="fab fa-google-plus-square fa-1x"></i> Google+</a>
+    <br><br>
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <p>Not registered?<a href="#" routerLink="/register"> Create an account</a></p>
+    </div>
+    </form>
+</div>

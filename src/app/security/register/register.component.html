@@ -1,17 +1,25 @@
 <div class="container">
-  <form class="form-signup">
-    <h2 class="form-signup-heading">Please sign up</h2>
-    <label for="inputEmail" class="sr-only">Email address</label>
-    <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
-    <label for="inputPassword" class="sr-only">Password</label>
-    <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-    <label for="inputCPassword" class="sr-only">Confirm Password</label>
-    <input type="password" id="inputCPassword" class="form-control" placeholder="Confirm Password" required>
-    <label for="mobileNo" class="sr-only">Mobile no.</label>
-    <input type="number" id="mobileNo" class="form-control" placeholder="Mobile no" required autofocus>
-    <br>
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign Up</button>
-    <button class="btn btn-lg btn-primary btn-block" (click)="goHome()">Back</button>
-  </form>
-</div> <!-- /container -->
+<form autocomplete="off" novalidate class="login-form" [formGroup]="form">
 
+  <fieldset>
+      <legend>Sign Up</legend>
+
+      <div class="form-group row">
+          <input name="email" class="form-control" formControlName="email" placeholder="a@a.com">
+      </div>
+      <div class="form-group row">
+          <input name="password" class="form-control" formControlName="password" type="password" placeholder="*****">
+      </div>
+      <div class="form-group row">
+          <input name="confirm" class="form-control" formControlName="confirm" type="password" placeholder="*****">
+      </div>
+  </fieldset>
+
+  <button (click)="signUp()" [disabled]="!isPasswordMatch()" class="btn btn-primary">Sign Up</button>
+  <br><br>
+  <div class="col-md-12 col-sm-12 col-xs-12">
+        <p>Already registered?<a href="#" routerLink="/login"> Sign In</a></p>
+  </div>
+</form>
+
+</div>

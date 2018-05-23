@@ -56,6 +56,18 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 4. Unzip the library thumbnails to the src/assests/images directory.
 
 
-## this app consist 5 features
-1. 
-2. 
+## Book Catalogue Features
+1. Register
+2. Login
+3. Search books
+4. Add New Book
+5. Upload Book cover
+6. Update book details
+
+<img src="images/2.png" width="450">
+<hr>
+<img src="images/3.png" width="450">
+<hr>
+<img src="images/1.gif" width="600">
+
+

@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;" *ngIf="isLogon || async">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary rounded" style="background-color: #e3f2fd;">
   <a class="navbar-brand" routerLink="/Home"
   routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Book Worm</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -9,7 +9,7 @@
       <li class="nav-item">
           <a class="nav-link" routerLink="/" routerLinkActive="active"><i class="fas fa-home"></i>&nbsp;Home</a>
       </li>
-      <li class="nav-item dropdown">
+      <li class="nav-item dropdown" *ngIf="authInfo?.isLoggedIn()">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Books
         </a>
@@ -17,9 +17,10 @@
           <a class="dropdown-item" routerLink="/books/add" routerLinkActive="active"><i class="fas fa-plus"></i>&nbsp;Add</a>
           <a class="dropdown-item" routerLink="/books"><i class="fas fa-book"></i>&nbsp;Search</a>
           <a class="dropdown-item" routerLink="/book-upload"><i class="fas fa-upload"></i>&nbsp;Upload</a>
+          <a class="dropdown-item" routerLink="/books/edit"><i class="fas fa-upload"></i>&nbsp;Edit Book FormGroup</a>
         </div>
       </li>
-      <li class="nav-item dropdown">
+      <li class="nav-item dropdown" *ngIf="authInfo?.isLoggedIn()">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Book Editor
         </a>
@@ -29,18 +30,26 @@
         </div>
       </li>
      </ul>
-  </div>
-  <div class="navbar-collapse collapse order-3 dual-collapse2">
-    <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-            <a class="nav-link" routerLink="/login">Login</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" routerLink="/register">Register</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" (click)="logout()">Logout</a>
+     <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+          <a class="nav-link" routerLinkActive="menu-active" *ngIf="!authInfo?.isLoggedIn()" routerLink="/login">Login</a>
       </li>
-    </ul>
-</div>
+      <li class="nav-item">
+          <a class="nav-link" routerLinkActive="menu-active" *ngIf="!authInfo?.isLoggedIn()" routerLink="/register">Register</a>
+      </li>
+      <li class="nav-item dropdown" *ngIf="authInfo?.isLoggedIn()">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fas fa-user-circle fa-lg"></i> {{authInfo.email || async}}
+          </a>
+          <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="#" (click)="logout()">Logout</a>
+          </div>
+        </li>
+
+      <li class="nav-item">
+         
+      </li>
+      </ul>
+  </div>
+  
 </nav>

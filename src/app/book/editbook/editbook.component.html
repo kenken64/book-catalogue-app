@@ -1,0 +1,31 @@
+<br>
+<div class="container">
+<form [formGroup]="editBookForm" (ngSubmit)="onSubmit()">
+    <div style="margin-bottom: 1em">
+      <button type="submit"
+        class="btn btn-success">Save</button> &nbsp;
+      <button type="button" (click)="revert()"
+        class="btn btn-danger">Reset</button>
+    </div>
+
+<div formArrayName="ingredientsList" class="well well-lg">
+    <div *ngFor="let ingredient of ingredients.controls; let i=index" [formGroupName]="i" >
+      <!-- The repeated address template -->
+      <h4>Ingredient #{{i + 1}}</h4>
+      <div style="margin-left: 1em;">
+        <div class="form-group">
+          <label class="center-block">Item No.:
+            <input class="form-control" formControlName="itemNo">
+          </label>
+          <label class="center-block">Ingredient Name:
+            <input class="form-control" formControlName="name">
+          </label>
+        </div>
+      </div>
+      <br>
+      <!-- End of the repeated address template -->
+    </div>
+    <button (click)="addIngredient()" type="button">Add Ingredient</button>
+  </div>
+</form>
+</div>
