@@ -68,6 +68,6 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 <hr>
 <img src="images/3.png" width="450">
 <hr>
-<img src="images/1.gif" width="600">
+<img src="images/1.gif" width="800" width="600">
 
 
