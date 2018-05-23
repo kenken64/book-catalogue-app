@@ -45,3 +45,4 @@ Thumbs.db
 /server/node_modules
 /server/.env
 /server/fsf2018r1-firebase-adminsdk-r3ido-01c84c91f6.json
+package-lock.json
